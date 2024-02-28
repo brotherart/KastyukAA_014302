@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/documents")
 public class DocumentsCont {
@@ -31,6 +33,11 @@ public class DocumentsCont {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(document, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> documentSearch(@RequestParam(defaultValue = "") String name, @RequestParam(defaultValue = "") String date) {
+        return new ResponseEntity<>(documentsRepo.findAllByNameContainingAndDateContaining(name, date), HttpStatus.OK);
     }
 
     @DeleteMapping("/{documentId}/delete")
@@ -111,7 +118,7 @@ public class DocumentsCont {
         return new ResponseEntity<>(document, HttpStatus.OK);
     }
 
-    @PatchMapping("/{documentId}/edit")
+    @PutMapping("/{documentId}/edit")
     public ResponseEntity<?> documentEdit(
             @PathVariable Long documentId, @RequestParam(defaultValue = "") String name,
             @RequestParam(defaultValue = "0") int number, @RequestParam(defaultValue = "") String date,
@@ -129,6 +136,7 @@ public class DocumentsCont {
             if (!documentScan.isEmpty()) documents.setDocumentScan(documentScan);
             if (!document.isEmpty()) documents.setDocument(document);
             if (!description.isEmpty()) documents.setDescription(description);
+            documents = documentsRepo.saveAndFlush(documents);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

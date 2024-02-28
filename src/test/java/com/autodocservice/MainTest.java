@@ -91,7 +91,7 @@ public class MainTest {
         Assertions.assertNotNull(newDocument);
         Assertions.assertNull(newDocument.getReceiver());
 
-        Users receiver = usersRepo.saveAndFlush(new Users("username", "password", Role.CLIENT));
+        Users receiver = usersRepo.saveAndFlush(new Users("username", "password", Role.WORKER));
         newDocument.setReceiver(receiver);
 
         Assertions.assertNotNull(newDocument.getReceiver());
@@ -191,7 +191,7 @@ public class MainTest {
     void UserAdd() {
         String username = "username";
         String password = "password";
-        Role role = Role.MANAGER;
+        Role role = Role.USER;
 
         Users user = new Users(username, password, role);
 

@@ -13,4 +13,6 @@ public interface DocumentsRepo extends JpaRepository<Documents, Long> {
     List<Documents> findAllByName(String name);
 
     List<Documents> findAllByDate(String date);
+
+    List<Documents> findAllByNameContainingAndDateContaining(String name, String date);
 }

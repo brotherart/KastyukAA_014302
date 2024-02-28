@@ -1,16 +1,11 @@
 package com.autodocservice.config;
 
-import com.autodocservice.service.UsersService;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -21,11 +16,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.inMemoryAuthentication()
                 .withUser("admin").password("{noop}password").roles("ADMIN")
                 .and()
-                .withUser("chief").password("{noop}password").roles("CHIEF")
+                .withUser("chief").password("{noop}password").roles("HEAD")
                 .and()
-                .withUser("manager").password("{noop}password").roles("MANAGER")
+                .withUser("manager").password("{noop}password").roles("USER")
                 .and()
-                .withUser("client").password("{noop}password").roles("CLIENT")
+                .withUser("client").password("{noop}password").roles("WORKER")
         ;
     }
 
@@ -35,13 +30,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .and()
                 .authorizeHttpRequests()
+                .antMatchers(HttpMethod.GET, "/documents/search").hasRole("WORKER")
                 .antMatchers(HttpMethod.GET, "/users/*").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET, "/documents/{documentId}").hasRole("CHIEF")
-                .antMatchers(HttpMethod.POST, "/documents/{documentId}/transfer").hasRole("MANAGER")
-                .antMatchers(HttpMethod.POST, "/documents/add").hasRole("CLIENT")
-                .antMatchers(HttpMethod.DELETE, "/documents/{id}/delete").hasRole("CLIENT")
-                .antMatchers(HttpMethod.PATCH, "/documents/{id}/edit").hasRole("CLIENT")
-                .antMatchers(HttpMethod.POST, "/documents/{documentId}/comment").hasRole("CLIENT")
+                .antMatchers(HttpMethod.GET, "/documents/{documentId}").hasRole("HEAD")
+                .antMatchers(HttpMethod.POST, "/documents/{documentId}/transfer").hasRole("USER")
+                .antMatchers(HttpMethod.POST, "/documents/add").hasRole("WORKER")
+                .antMatchers(HttpMethod.POST, "/documents/{documentId}/comment").hasRole("WORKER")
+                .antMatchers(HttpMethod.PUT, "/documents/{id}/edit").hasRole("WORKER")
+                .antMatchers(HttpMethod.DELETE, "/documents/{id}/delete").hasRole("WORKER")
                 .and()
                 .csrf().disable()
                 .formLogin().disable()
