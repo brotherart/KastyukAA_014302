@@ -20,8 +20,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .withUser("manager").password("{noop}password").roles("USER")
                 .and()
-                .withUser("client").password("{noop}password").roles("WORKER")
-        ;
+                .withUser("client").password("{noop}password").roles("WORKER");
     }
 
     @Override
@@ -40,7 +39,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.DELETE, "/documents/{id}/delete").hasRole("WORKER")
                 .and()
                 .csrf().disable()
-                .formLogin().disable()
-        ;
+                .formLogin().disable();
     }
 }
